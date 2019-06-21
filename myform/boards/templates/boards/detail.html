@@ -1,0 +1,43 @@
+{% extends 'boards/base.html' %}
+{% block content %}
+  <h1>DETAIL</h1>
+  <p>번호: {{board.pk}}</p>
+  <p>제목: {{board.title}}</p>
+  <p>내용: {{board.content}}</p>
+  <p>생성 시각: {{board.created_at}}</p>
+  <p>수정 시각: {{board.updated_at}}</p>
+  {% if user == board.user %}
+    <a href="{% url 'boards:update' board.pk %}">수정</a>
+    <form action="{% url 'boards:delete' board.pk %}" method="POST">
+      {% csrf_token %}
+      <input type="submit" value="삭제">
+    </form>
+  {% endif %}
+  <hr>
+  <h4>댓글</h4>
+  {% for comment in comments %}
+  <div><strong>{{comment.user}} {{comment.content}}</strong>
+    {% if request.user == comment.user %}
+      <form action="{% url 'boards:comments_delete' board.pk comment.pk %}" method="POST" style="display:inline;">
+        {% csrf_token %}
+        <input type="submit" value="댓글삭제">
+      </form>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <hr>
+  
+  <h4>댓글작성</h4>
+  {% if user.is_authenticated %}
+    <form action="{% url 'boards:comments_create' board.pk %}" method='POST'>
+      {% csrf_token %}
+      {{ comment_form }}
+      <input type="submit" value="작성">
+    </form>
+  {% else %}
+    <a href="{% url 'accounts:login' %}">댓글을 작성하려면 로그인하세요.</a>
+  {% endif %}
+  <a href="{% url 'boards:index' %}">[back]</a>
+  <hr>
+  
+{% endblock  %}

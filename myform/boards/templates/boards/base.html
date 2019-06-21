@@ -1,0 +1,39 @@
+{% load bootstrap4 %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://kit.fontawesome.com/ba519bbf1c.js"></script>
+  {% bootstrap_css %}
+  <title>Document</title>
+</head>
+<body>
+<div class="container">
+  {% if user.is_authenticated %}
+    <h3>
+      hello {{ user.username }} 
+      <a href="{% url 'profile' user.username %}">내프로필</a>
+      <a href="{% url 'accounts:update' %}">회원수정</a>
+      <a href="{% url 'accounts:change_password' %}">비번번경</a>
+      <a href="{% url 'accounts:logout' %}">로그아웃</a>
+      <form action="{% url 'accounts:delete' %}" method="POST" style="display:inline;">
+        {% csrf_token %}
+        <input type='submit' value='회원탈퇴' class='btn btn-danger'>
+      </form>
+    </h3>
+  {% else %}
+  <h3>
+    <a href={% url 'accounts:login' %}>로그인</a>
+    <a href={% url 'accounts:signup' %}>회원가입</a>
+  </h3>
+  {% endif %}
+  <hr>
+  {% block content %}
+  {% endblock  %}
+</div>
+ {% bootstrap_javascript jquery='full' %}
+ <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</body>
+</html>
